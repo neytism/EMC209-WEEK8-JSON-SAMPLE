@@ -19,6 +19,7 @@ public class Register : MonoBehaviour
     public void CheckRegister()
     {
         allUsers = new List<UserData>();
+        
         string username = inputUsername.text;
         string password = inputPassword.text;
         string repeatPassword = inputRepeatPassword.text;
@@ -26,9 +27,13 @@ public class Register : MonoBehaviour
         Debug.Log(username);
         
         string jsonUsers = "";
-        if (PlayerPrefs.HasKey(USERS_KEY)) jsonUsers = PlayerPrefs.GetString(USERS_KEY);
+        if (PlayerPrefs.HasKey(USERS_KEY))
+        {
+            jsonUsers = PlayerPrefs.GetString(USERS_KEY);
+            allUsers = JsonConvert.DeserializeObject<List<UserData>>(jsonUsers);
+        }
 
-        allUsers = JsonConvert.DeserializeObject<List<UserData>>(jsonUsers);
+       
 
         if (jsonUsers != "")
         {

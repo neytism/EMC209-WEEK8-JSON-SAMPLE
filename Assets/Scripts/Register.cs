@@ -11,6 +11,7 @@ public class Register : MonoBehaviour
     [SerializeField] private TMP_InputField inputUsername;
     [SerializeField] private TMP_InputField inputPassword;
     [SerializeField] private TMP_InputField inputRepeatPassword;
+    [SerializeField] private TextMeshProUGUI textError;
     
     private const string USERS_KEY = "Users";
 
@@ -23,6 +24,19 @@ public class Register : MonoBehaviour
         string username = inputUsername.text;
         string password = inputPassword.text;
         string repeatPassword = inputRepeatPassword.text;
+
+        if (string.IsNullOrEmpty(username))
+        {
+            ShowError("Username required.");
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(password))
+        {
+            ShowError("Password Required");
+            return;
+        }
+        
         
         Debug.Log(username);
         
@@ -41,7 +55,8 @@ public class Register : MonoBehaviour
             {
                 if (user.username.Equals(username))
                 {
-                    Debug.Log("Username Taken");
+                    //Debug.Log("Username Taken");
+                    ShowError("Username Taken");
                     return;
                 }
             }
@@ -49,7 +64,8 @@ public class Register : MonoBehaviour
 
         if (!password.Equals(repeatPassword))
         {
-            Debug.Log("Password did not match");
+            //Debug.Log("Password did not match");
+            ShowError("Password did not match");
             return;
         }
 
@@ -58,10 +74,20 @@ public class Register : MonoBehaviour
         allUsers.Add(newUser);
             
         Debug.Log("Registered account.");
+        inputUsername.text = "";
+        inputPassword.text = "";
+        inputRepeatPassword.text = "";
+        ShowError(show:false);
             
         //save
             
         PlayerPrefs.SetString(USERS_KEY, JsonConvert.SerializeObject(allUsers));
+    }
+
+    private void ShowError(string error = "", bool show = true)
+    {
+        textError.rectTransform.parent.gameObject.SetActive(show);
+        textError.text = $"Error: {error}";
     }
     
     

@@ -10,6 +10,7 @@ public class Login : MonoBehaviour
 {
     [SerializeField] private TMP_InputField inputUsername;
     [SerializeField] private TMP_InputField inputPassword;
+    [SerializeField] private TextMeshProUGUI textError;
     
     private const string USERS_KEY = "Users";
 
@@ -40,6 +41,19 @@ public class Login : MonoBehaviour
         string username = inputUsername.text;
         string password = inputPassword.text;
         
+        if (string.IsNullOrEmpty(username))
+        {
+            ShowError("Username Required");
+            return;
+        }
+        
+        if (string.IsNullOrEmpty(password))
+        {
+            ShowError("Password Required");
+            return;
+        }
+
+        
         string jsonUsers = "";
         if (PlayerPrefs.HasKey(USERS_KEY)) jsonUsers = PlayerPrefs.GetString(USERS_KEY);
 
@@ -51,22 +65,37 @@ public class Login : MonoBehaviour
             {
                 if (user.username.Equals(username))
                 {
-                    if (user.password.Equals(password))
+                    if (!user.password.Equals(password))
                     {
-                        Debug.Log("Logged in.");
+                        ShowError("Invalid Username or password.");
+                        Debug.Log("Password incorrect.");
                     }
                     else
                     {
-                        Debug.Log("Password incorrect.");
+                        ShowError(show:false);
+                        inputUsername.text = "";
+                        inputPassword.text = "";
+                        Debug.Log("Logged in.");
                     }
 
                     return;
                 }
             }
             
-            Debug.Log("User does not exist.");
+            ShowError("Invalid Username or password.");
 
         }
+        else
+        {
+            ShowError("Invalid Username or password.");
+        }
     }
+    
+    private void ShowError(string error = "", bool show = true)
+    {
+        textError.rectTransform.parent.gameObject.SetActive(show);
+        textError.text = $"Error: {error}";
+    }
+
     
 }
